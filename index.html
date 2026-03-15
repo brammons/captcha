@@ -1,0 +1,195 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proving Humanity</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="card" id="card">
+ 
+  <div id="mainLayout">
+    <div class="main-grid">
+      <div class="photo-col" id="colLeft"></div>
+ 
+      <div class="center-panel">
+        <div class="headline">Do you have an eye for humanity?</div>
+        <div class="subline">Click on the faces of those you feel are "real".</div>
+      </div>
+ 
+      <div class="photo-col" id="colRight"></div>
+    </div>
+ 
+    <div class="bottom-row" id="rowBottom"></div>
+ 
+    <div class="error-bar" id="errorBar">Please select at least one face before verifying.</div>
+ 
+    <div class="footer">
+      <div class="footer-brand">
+        <div class="status-dot"></div>
+        Secured · Human Verification
+      </div>
+      <div class="footer-right">
+        <div class="sel-label">Selected: <strong id="countEl">0</strong></div>
+        <button class="btn btn-outline" onclick="resetCaptcha()">↺ New</button>
+        <button class="btn btn-primary" onclick="verifyCaptcha()">Verify →</button>
+      </div>
+    </div>
+  </div>
+ 
+  <div class="success-screen" id="successScreen">
+    <div class="tick-circle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+    <div class="success-h">Human<br>Verified.</div>
+    <div class="success-p">You have an eye for humanity.</div>
+    <button class="btn-again" onclick="resetAndShow()">Try again</button>
+  </div>
+ 
+</div>
+ 
+<script>
+// Real human portrait photos from Unsplash (diverse, candid, authentic-looking)
+const realFaces = [
+  'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=280&h=320&fit=crop&crop=faces,top',
+  'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=280&h=320&fit=crop&crop=faces,top',
+  'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=280&h=320&fit=crop&crop=faces,top',
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=280&h=320&fit=crop&crop=faces,top',
+  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=280&h=320&fit=crop&crop=faces,top',
+  'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=280&h=320&fit=crop&crop=faces,top',
+  'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=280&h=320&fit=crop&crop=faces,top',
+  'https://images.unsplash.com/photo-1542909168-82c3e7fdcd5b?w=280&h=320&fit=crop&crop=faces,top',
+  'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=280&h=320&fit=crop&crop=faces,top',
+  'https://images.unsplash.com/photo-1521119989659-a83eee488004?w=280&h=320&fit=crop&crop=faces,top',
+  'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=280&h=320&fit=crop&crop=faces,top',
+  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=280&h=320&fit=crop&crop=faces,top',
+];
+ 
+// More "uncanny"/stylized photos representing AI-gen (correct=false)
+const aiFaces = [
+  'https://images.unsplash.com/photo-1628890923662-2cb23c2e0cfe?w=280&h=320&fit=crop&crop=faces,top',
+  'https://images.unsplash.com/photo-1627161684458-a62da52b51c3?w=280&h=320&fit=crop&crop=faces,top',
+  'https://images.unsplash.com/photo-1645378999496-33c8c2afe38d?w=280&h=320&fit=crop&crop=faces,top',
+  'https://images.unsplash.com/photo-1639628735078-ed2f038a193e?w=280&h=320&fit=crop&crop=faces,top',
+  'https://images.unsplash.com/photo-1640960543409-dbe56ccc30e2?w=280&h=320&fit=crop&crop=faces,top',
+  'https://images.unsplash.com/photo-1654110455429-cf322b40a906?w=280&h=320&fit=crop&crop=faces,top',
+];
+ 
+let currentFaces = [];
+let selected = new Set();
+ 
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+ 
+function makeFaceEl(faceData, globalIdx, delay) {
+  const div = document.createElement('div');
+  div.className = 'face';
+  div.style.animationDelay = delay + 'ms';
+  div.dataset.idx = globalIdx;
+ 
+  div.innerHTML = `
+    <img src="${faceData.url}" alt="portrait" loading="lazy">
+    <div class="grain"></div>
+    <div class="burn"></div>
+    <div class="hover-ring"></div>
+    <div class="sel-overlay"></div>
+    <div class="checkmark">
+      <svg viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="24" r="21" fill="rgba(255,255,255,0.9)" stroke="#111" stroke-width="2"/>
+        <polyline points="13,24 21,33 35,15" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="flash"></div>
+  `;
+ 
+  div.addEventListener('click', () => {
+    document.getElementById('errorBar').classList.remove('show');
+    if (selected.has(globalIdx)) {
+      selected.delete(globalIdx);
+      div.classList.remove('selected');
+    } else {
+      selected.add(globalIdx);
+      div.classList.add('selected', 'flashing');
+      setTimeout(() => div.classList.remove('flashing'), 330);
+    }
+    document.getElementById('countEl').textContent = selected.size;
+  });
+ 
+  return div;
+}
+ 
+function resetCaptcha() {
+  selected.clear();
+  document.getElementById('countEl').textContent = '0';
+  document.getElementById('errorBar').classList.remove('show');
+ 
+  const pickedReal = shuffle(realFaces).slice(0, 10).map(u => ({ url: u, real: true }));
+  const pickedAI   = shuffle(aiFaces).slice(0, 6).map(u => ({ url: u, real: false }));
+  currentFaces = shuffle([...pickedReal, ...pickedAI]); // 16 faces total (won't all show - take 18 max)
+ 
+  // Ensure exactly 18 slots: top-left 6, top-right 6, bottom 6
+  while (currentFaces.length < 18) currentFaces.push(currentFaces[Math.floor(Math.random() * currentFaces.length)]);
+  currentFaces = currentFaces.slice(0, 18);
+ 
+  const colLeft   = document.getElementById('colLeft');
+  const colRight  = document.getElementById('colRight');
+  const rowBottom = document.getElementById('rowBottom');
+ 
+  colLeft.innerHTML = '';
+  colRight.innerHTML = '';
+  rowBottom.innerHTML = '';
+ 
+  currentFaces.slice(0, 6).forEach((f, i) =>
+    colLeft.appendChild(makeFaceEl(f, i, i * 35)));
+  currentFaces.slice(6, 12).forEach((f, i) =>
+    colRight.appendChild(makeFaceEl(f, i + 6, 60 + i * 35)));
+  currentFaces.slice(12, 18).forEach((f, i) =>
+    rowBottom.appendChild(makeFaceEl(f, i + 12, 120 + i * 35)));
+}
+ 
+function verifyCaptcha() {
+  if (selected.size === 0) {
+    document.getElementById('errorBar').classList.add('show');
+    return;
+  }
+ 
+  const wrongPick = [...selected].some(idx => !currentFaces[idx].real);
+  const realTotal = currentFaces.filter(f => f.real).length;
+  const gotReal   = [...selected].filter(idx => currentFaces[idx].real).length;
+ 
+  if (!wrongPick && gotReal >= Math.ceil(realTotal * 0.5)) {
+    document.getElementById('mainLayout').style.display = 'none';
+    document.getElementById('successScreen').classList.add('show');
+  } else {
+    const card = document.getElementById('card');
+    card.classList.remove('shake');
+    void card.offsetWidth;
+    card.classList.add('shake');
+    setTimeout(() => card.classList.remove('shake'), 450);
+    const bar = document.getElementById('errorBar');
+    bar.textContent = wrongPick
+      ? 'Some selections may be AI-generated — look more carefully.'
+      : 'Try selecting more real faces before verifying.';
+    bar.classList.add('show');
+  }
+}
+ 
+function resetAndShow() {
+  document.getElementById('successScreen').classList.remove('show');
+  document.getElementById('mainLayout').style.display = 'block';
+  document.getElementById('errorBar').textContent = 'Please select at least one face before verifying.';
+  resetCaptcha();
+}
+ 
+resetCaptcha();
+</script>
+</body>
+</html>

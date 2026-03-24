@@ -173,7 +173,10 @@
   }
  
   .headline {
-    font-family: 'Press Start 2P', monospace;
+    @font-face {
+      font-family: Gemini-Regular;
+      src: url(Font/Gemini-Regular copy.otf);
+    }
     font-size: 19px;
     line-height: 1.75;
     color: #111111;

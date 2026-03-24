@@ -53,28 +53,29 @@
 <script>
 // Real human portrait photos from Unsplash (diverse, candid, authentic-looking)
 const realFaces = [
-  'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=280&h=320&fit=crop&crop=faces,top',
-  'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=280&h=320&fit=crop&crop=faces,top',
-  'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=280&h=320&fit=crop&crop=faces,top',
-  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=280&h=320&fit=crop&crop=faces,top',
-  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=280&h=320&fit=crop&crop=faces,top',
-  'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=280&h=320&fit=crop&crop=faces,top',
-  'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=280&h=320&fit=crop&crop=faces,top',
-  'https://images.unsplash.com/photo-1542909168-82c3e7fdcd5b?w=280&h=320&fit=crop&crop=faces,top',
-  'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=280&h=320&fit=crop&crop=faces,top',
-  'https://images.unsplash.com/photo-1521119989659-a83eee488004?w=280&h=320&fit=crop&crop=faces,top',
-  'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=280&h=320&fit=crop&crop=faces,top',
-  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=280&h=320&fit=crop&crop=faces,top',
+  'https://i.pinimg.com/736x/ed/69/e8/ed69e8cd121d9e64d66e2e53ea2e93a7.jpg',
+  'https://i.pinimg.com/736x/cd/9c/15/cd9c151cc20c518576a2f1854589cf81.jpg',
+  'https://i.pinimg.com/1200x/13/c3/94/13c394d7089f879a8a1e27a42d518352.jpg',
+  'https://i.pinimg.com/1200x/1b/c9/c5/1bc9c5cfbad6a3e68e3887e8aad9e4e4.jpg',
+  'https://i.pinimg.com/736x/a8/3b/d5/a83bd541d5beaae3b52dbdc9b79f4c8a.jpg',
+  'https://i.pinimg.com/736x/a2/34/c9/a234c9603bd331b3a4a4829b01514b6e.jpg',
+  'https://i.pinimg.com/736x/9b/ba/a3/9bbaa3da78b6673692f8303abbba8f4d.jpg',
+  'https://i.pinimg.com/736x/fb/a4/8a/fba48a2f0fec50d157f95579b69e5704.jpg',
+  'https://i.pinimg.com/736x/47/1b/fe/471bfe329d4042614522c8ca63311888.jpg',
+  'https://i.pinimg.com/736x/e8/55/f6/e855f620c3baf2a038adde7cdd8564e6.jpg',
+  'https://i.pinimg.com/1200x/18/2d/3c/182d3cfb07c37a47ac28f5358998aeda.jpg',
+  'https://i.pinimg.com/736x/6a/b9/78/6ab978a1356b447f1dc80ad29976a40a.jpg',
 ];
  
 // More "uncanny"/stylized photos representing AI-gen (correct=false)
 const aiFaces = [
-  'https://images.unsplash.com/photo-1628890923662-2cb23c2e0cfe?w=280&h=320&fit=crop&crop=faces,top',
-  'https://images.unsplash.com/photo-1627161684458-a62da52b51c3?w=280&h=320&fit=crop&crop=faces,top',
-  'https://images.unsplash.com/photo-1645378999496-33c8c2afe38d?w=280&h=320&fit=crop&crop=faces,top',
-  'https://images.unsplash.com/photo-1639628735078-ed2f038a193e?w=280&h=320&fit=crop&crop=faces,top',
-  'https://images.unsplash.com/photo-1640960543409-dbe56ccc30e2?w=280&h=320&fit=crop&crop=faces,top',
-  'https://images.unsplash.com/photo-1654110455429-cf322b40a906?w=280&h=320&fit=crop&crop=faces,top',
+  'https://i.pinimg.com/1200x/e5/72/bc/e572bc6edfcff9987a21058fdfccbe94.jpg',
+  'https://i.pinimg.com/1200x/16/c1/7c/16c17c67131b2cdb57fde4a3df2f9b9e.jpg',
+  'https://i.pinimg.com/736x/90/72/78/907278ff4180aad13b025c3bd147e65a.jpg',
+  'https://i.pinimg.com/1200x/0a/e1/7d/0ae17d5411ec142901c6dbbe6835247d.jpg',
+  'https://i.pinimg.com/736x/36/f6/bf/36f6bfe715a53529ad417a05277d3b99.jpg',
+  'https://i.pinimg.com/1200x/5e/b6/a1/5eb6a12d2ca069cf10b2e43d07d6511e.jpg',
+  'https://i.pinimg.com/736x/20/e4/b0/20e4b01034b73be368da023823a5cd7d.jpg',
 ];
  
 let currentFaces = [];

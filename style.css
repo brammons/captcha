@@ -171,21 +171,29 @@
     gap: 20px;
     padding: 10px 0;
   }
+
+  @font-face {
+      font-family: Gemini-Regular;
+      src: url(Font/Gemini-Regular.otf);
+    }
  
   .headline {
-    @font-face {
-      font-family: Gemini-Regular;
-      src: url(Font/Gemini-Regular copy.otf);
-    }
-    font-size: 19px;
-    line-height: 1.75;
+    font-family: Gemini-Regular;
+    font-size: 36px;
+    line-height: 1;
     color: #111111;
     letter-spacing: -0.02em;
   }
+
+  @font-face {
+    font-family: ;
+    src: url();
+  }
  
   .subline {
-    font-size: 15px;
-    line-height: 1.6;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    line-height: 1.25;
     color: #2c2c2c;
     font-weight: 400;
     max-width: 210px;

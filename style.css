@@ -184,11 +184,6 @@
     color: #111111;
     letter-spacing: -0.02em;
   }
-
-  @font-face {
-    font-family: ;
-    src: url();
-  }
  
   .subline {
     font-family: Arial, Helvetica, sans-serif;
@@ -323,10 +318,16 @@
   .tick-circle svg { width: 30px; height: 30px; }
  
   .success-h {
-    font-family: 'Press Start 2P', monospace;
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 14px;
     line-height: 1.8;
     color: #111;
+  }
+
+  .success-sh {
+    font-family: Gemini-Regular;
+    font-size: 36px;
+    line-height: 1;
   }
  
   .success-p {

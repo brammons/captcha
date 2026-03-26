@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,23 +8,27 @@
 </head>
 <body>
     <div class="card" id="card">
- 
+
   <div id="mainLayout">
+
+    <div class="top-row" id="rowTop"></div>
+
     <div class="main-grid">
-      <div class="photo-col" id="colLeft"></div>
- 
+      <div class="side-col" id="colLeft"></div>
+
       <div class="center-panel">
         <div class="headline">Do you have an eye for humanity?</div>
         <div class="subline">Click on the faces of those you feel are "real".</div>
+        <div class="hint">*There are no more than 12 real faces.</div>
       </div>
- 
-      <div class="photo-col" id="colRight"></div>
+
+      <div class="side-col" id="colRight"></div>
     </div>
- 
+
     <div class="bottom-row" id="rowBottom"></div>
- 
+
     <div class="error-bar" id="errorBar">Please select at least one face before verifying.</div>
- 
+
     <div class="footer">
       <div class="footer-brand">
         <div class="status-dot"></div>
@@ -36,7 +41,7 @@
       </div>
     </div>
   </div>
- 
+
   <div class="success-screen" id="successScreen">
     <div class="tick-circle">
       <svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -44,15 +49,14 @@
       </svg>
     </div>
     <div class="success-h">Verified</div>
-        <div class="success-sh">Human</div>
+    <div class="success-sh">Human</div>
     <div class="success-p">You have an eye for humanity.</div>
     <button class="btn-again" onclick="resetAndShow()">Try again</button>
   </div>
- 
+
 </div>
- 
+
 <script>
-// Real human portrait photos from Unsplash (diverse, candid, authentic-looking)
 const realFaces = [
   'https://i.pinimg.com/736x/ed/69/e8/ed69e8cd121d9e64d66e2e53ea2e93a7.jpg',
   'https://i.pinimg.com/736x/cd/9c/15/cd9c151cc20c518576a2f1854589cf81.jpg',
@@ -67,8 +71,7 @@ const realFaces = [
   'https://i.pinimg.com/1200x/18/2d/3c/182d3cfb07c37a47ac28f5358998aeda.jpg',
   'https://i.pinimg.com/736x/6a/b9/78/6ab978a1356b447f1dc80ad29976a40a.jpg',
 ];
- 
-// More "uncanny"/stylized photos representing AI-gen (correct=false)
+
 const aiFaces = [
   'https://i.pinimg.com/1200x/e5/72/bc/e572bc6edfcff9987a21058fdfccbe94.jpg',
   'https://i.pinimg.com/1200x/16/c1/7c/16c17c67131b2cdb57fde4a3df2f9b9e.jpg',
@@ -81,10 +84,10 @@ const aiFaces = [
   'https://i.pinimg.com/736x/a0/cb/f8/a0cbf895e3e033b27a823ef8bb5b6a31.jpg',
   'https://i.pinimg.com/736x/c6/53/b2/c653b2d6c44b9be45d638c81d164309e.jpg',
 ];
- 
+
 let currentFaces = [];
 let selected = new Set();
- 
+
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -93,13 +96,13 @@ function shuffle(arr) {
   }
   return a;
 }
- 
+
 function makeFaceEl(faceData, globalIdx, delay) {
   const div = document.createElement('div');
   div.className = 'face';
   div.style.animationDelay = delay + 'ms';
   div.dataset.idx = globalIdx;
- 
+
   div.innerHTML = `
     <img src="${faceData.url}" alt="portrait" loading="lazy">
     <div class="grain"></div>
@@ -114,7 +117,7 @@ function makeFaceEl(faceData, globalIdx, delay) {
     </div>
     <div class="flash"></div>
   `;
- 
+
   div.addEventListener('click', () => {
     document.getElementById('errorBar').classList.remove('show');
     if (selected.has(globalIdx)) {
@@ -127,49 +130,57 @@ function makeFaceEl(faceData, globalIdx, delay) {
     }
     document.getElementById('countEl').textContent = selected.size;
   });
- 
+
   return div;
 }
- 
+
 function resetCaptcha() {
   selected.clear();
   document.getElementById('countEl').textContent = '0';
   document.getElementById('errorBar').classList.remove('show');
- 
+
+  // 5 top + 4 sides (2 left, 2 right) + 5 bottom = 14 total
   const pickedReal = shuffle(realFaces).slice(0, 10).map(u => ({ url: u, real: true }));
   const pickedAI   = shuffle(aiFaces).slice(0, 6).map(u => ({ url: u, real: false }));
-  currentFaces = shuffle([...pickedReal, ...pickedAI]); // 16 faces total (won't all show - take 18 max)
- 
-  // Ensure exactly 18 slots: top-left 6, top-right 6, bottom 6
-  while (currentFaces.length < 18) currentFaces.push(currentFaces[Math.floor(Math.random() * currentFaces.length)]);
-  currentFaces = currentFaces.slice(0, 18);
- 
+  currentFaces = shuffle([...pickedReal, ...pickedAI]); // exactly 14
+
+  const rowTop    = document.getElementById('rowTop');
   const colLeft   = document.getElementById('colLeft');
   const colRight  = document.getElementById('colRight');
   const rowBottom = document.getElementById('rowBottom');
- 
-  colLeft.innerHTML = '';
-  colRight.innerHTML = '';
+
+  rowTop.innerHTML    = '';
+  colLeft.innerHTML   = '';
+  colRight.innerHTML  = '';
   rowBottom.innerHTML = '';
- 
+
+  // 0–4: top row (5 images)
   currentFaces.slice(0, 6).forEach((f, i) =>
-    colLeft.appendChild(makeFaceEl(f, i, i * 35)));
-  currentFaces.slice(6, 12).forEach((f, i) =>
-    colRight.appendChild(makeFaceEl(f, i + 6, 60 + i * 35)));
-  currentFaces.slice(12, 18).forEach((f, i) =>
-    rowBottom.appendChild(makeFaceEl(f, i + 12, 120 + i * 35)));
+    rowTop.appendChild(makeFaceEl(f, i, i * 35)));
+
+  // 5–6: left side (2 images stacked)
+  currentFaces.slice(6, 8).forEach((f, i) =>
+    colLeft.appendChild(makeFaceEl(f, i + 6, 180 + i * 35)));
+
+  // 7–8: right side (2 images stacked)
+  currentFaces.slice(8, 10).forEach((f, i) =>
+    colRight.appendChild(makeFaceEl(f, i + 8, 180 + i * 35)));
+
+  // 9–13: bottom row (5 images)
+  currentFaces.slice(10, 16).forEach((f, i) =>
+    rowBottom.appendChild(makeFaceEl(f, i + 10, 250 + i * 35)));
 }
- 
+
 function verifyCaptcha() {
   if (selected.size === 0) {
     document.getElementById('errorBar').classList.add('show');
     return;
   }
- 
+
   const wrongPick = [...selected].some(idx => !currentFaces[idx].real);
   const realTotal = currentFaces.filter(f => f.real).length;
   const gotReal   = [...selected].filter(idx => currentFaces[idx].real).length;
- 
+
   if (!wrongPick && gotReal >= Math.ceil(realTotal * 0.5)) {
     document.getElementById('mainLayout').style.display = 'none';
     document.getElementById('successScreen').classList.add('show');
@@ -186,14 +197,14 @@ function verifyCaptcha() {
     bar.classList.add('show');
   }
 }
- 
+
 function resetAndShow() {
   document.getElementById('successScreen').classList.remove('show');
   document.getElementById('mainLayout').style.display = 'block';
   document.getElementById('errorBar').textContent = 'Please select at least one face before verifying.';
   resetCaptcha();
 }
- 
+
 resetCaptcha();
 </script>
 </body>
